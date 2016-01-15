@@ -10,16 +10,13 @@
 <body>
 
 <div class="container"
-
-     ng-app="simple-todos"
-
      ng-controller="TodosListCtrl">
      <h1>Todo List</h1>
      <ul>
      	<li ng-repeat="task in tasks" ng-class="{'checked': task.checked}"n g-init="edit = fasle;">
      		<div ng-show="edit">
-      			<input type="text" ng-model="task.text" style="width: 80%">
-      			<button ng-click="edit=false">Done</button>
+      			<input type="text" ng-model="task.text">
+      			<button ng-click="edit=false" style="width: 15%">Done</button>
      		</div>
       		<div ng-hide="edit">
 	     		<button class="delete" ng-click="tasks.remove(task)">&times;</button>
@@ -30,7 +27,7 @@
      </ul>
      <div class="pad">
 	     <input type="text" ng-model="text" placeholder="new task">
-	     <button ng-click="addTask()">Add</button>
+	     <button ng-click="addTask()" style="width: 15%">Add</button>
 	 </div>
 </div>
 
