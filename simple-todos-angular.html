@@ -16,7 +16,17 @@
      ng-controller="TodosListCtrl">
      <h1>Todo List</h1>
      <ul>
-     	<li ng-repeat="task in tasks">{{ task.text }}</li>
+     	<li ng-repeat="task in tasks" ng-class="{'checked': task.checked}"n g-init="edit = fasle;">
+     		<div ng-show="edit">
+      			<input type="text" ng-model="task.text" style="width: 80%">
+      			<button ng-click="edit=false">Done</button>
+     		</div>
+      		<div ng-hide="edit">
+	     		<button class="delete" ng-click="tasks.remove(task)">&times;</button>
+	      		<input type="checkbox" ng-model="task.checked" class="toggle-checked" />
+	     		<span ng-click="edit=true">{{ task.text }}</span>
+     		</div>
+     	</li>
      </ul>
      <div class="pad">
 	     <input type="text" ng-model="text" placeholder="new task">
