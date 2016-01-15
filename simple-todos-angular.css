@@ -128,3 +128,9 @@ header .hide-completed {
 h1 {
 	margin: 20px;
 }
+input[type='text'] {
+	width: 80%;
+}
+.pad {
+	padding :10px;
+}
