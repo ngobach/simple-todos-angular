@@ -1,34 +1,36 @@
-
-
 <head>
-
   <title>Todo List Angular</title>
-
 </head>
-
-
 <body>
 
 <div class="container"
-     ng-controller="TodosListCtrl">
-     <h1>Todo List</h1>
-     <ul>
-     	<li ng-repeat="task in tasks" ng-class="{'checked': task.checked}"n g-init="edit = fasle;">
-     		<div ng-show="edit">
-      			<input type="text" ng-model="task.text">
-      			<button ng-click="edit=false" style="width: 15%">Done</button>
-     		</div>
-      		<div ng-hide="edit">
-	     		<button class="delete" ng-click="tasks.remove(task)">&times;</button>
-	      		<input type="checkbox" ng-model="task.checked" class="toggle-checked" />
-	     		<span ng-click="edit=true">{{ task.text }}</span>
-     		</div>
-     	</li>
-     </ul>
-     <div class="pad">
-	     <input type="text" ng-model="text" placeholder="new task">
-	     <button ng-click="addTask()" style="width: 15%">Add</button>
-	 </div>
+  ng-controller="TodosListCtrl">
+  <h1>Todo List</h1>
+
+  <login-buttons></login-buttons>
+  <h5>Incomplete: {{ incompleteCount() }}</h5>
+  <div class="text-align: right">
+    <label class="hide-completed"><input type="checkbox" ng-model="hideCompleted"/> Hide Completed Tasks</label>
+  </div>
+   <ul>
+   	<li ng-repeat="task in tasks" ng-class="{'checked': task.checked}" ng-init="edit = fasle;">
+   		<div ng-show="edit">
+    			<input type="text" ng-model="task.text">
+    			<button ng-click="edit=false" style="width: 15%">Done</button>
+   		</div>
+    		<div ng-hide="edit">
+     		<button class="delete" ng-click="tasks.remove(task)">&times;</button>
+      		<input type="checkbox" ng-model="task.checked" class="toggle-checked" />
+     		<span ng-click="!task.checked && (edit=true)">{{ task.text }}</span><br>
+        <small>By: {{ task.username }}</small>
+   		</div>
+   	</li>
+   </ul>
+   <div class="pad" style="margin-top: 20px">
+     <input type="text" ng-model="text" placeholder="new task">
+     <button ng-click="addTask()" style="width: 15%">Add Task</button>
+ </div>
+  <button ng-click="test()">Yahoo</button>
 </div>
 
 </body>
