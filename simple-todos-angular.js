@@ -13,17 +13,21 @@ Meteor.methods({
     });
   },
   deleteTask: function (taskId) {
-    // var task = Tasks.findOne(taskId);
-    // if (Meteor.userId() != task.owner)
-    //   throw new Meteor.Error('not-authorized');
+    var task = Tasks.findOne(taskId);
+    if (Meteor.userId() !== task.owner)
+      throw new Meteor.Error('not-authorized');
     Tasks.remove(taskId);
   },
   setChecked: function (taskId, value) {
-    // var task = Tasks.findOne(taskId);
-    // if (Meteor.userId() != task.owner)
-    //   throw new Meteor.Error('not-authorized');
     Tasks.update(taskId,{$set: {checked: value}});
-  }
+  },
+  setPrivate: function (taskId, value) {
+    var task = Tasks.findOne(taskId);
+    if (Meteor.userId() !== task.owner)
+      throw new Meteor.Error('not-authorized');
+    else
+      Tasks.update(taskId,{$set: {private: value}});
+  },
 });
 
 if (Meteor.isClient) {
@@ -46,17 +50,17 @@ if (Meteor.isClient) {
  
   angular.module('simple-todos').controller('TodosListCtrl', ['$scope','$meteor',
     function ($scope,$meteor) {
-
-
       $scope.hideCompleted = false;
+
+      $scope.query = {};
       $scope.$watch('hideCompleted', function (){
         if ($scope.hideCompleted)
           $scope.query = {checked: {$ne: true}};
         else
           $scope.query = {};
       });
-      $scope.query = {};
 
+      $scope.$meteorSubscribe('tasks');
       $scope.tasks = $meteor.collection(function (){
         return Tasks.find($scope.getReactively('query'),{sort: {createAt: -1}});
       });
@@ -73,11 +77,27 @@ if (Meteor.isClient) {
       $scope.incompleteCount = function () {
         return Tasks.find({ checked: {$ne: true} }).count();
       };
+
       $scope.deleteTask = function (task) {
         $meteor.call('deleteTask', task._id);
-      }
-      $scope.setChecked = function (task) {
+      };
+
+      $scope.setChecked = function (task,$event) {
         $meteor.call('setChecked', task._id, !task.checked);
+      };
+      $scope.setPrivate = function (task) {
+        $meteor.call('setPrivate', task._id, !task.private);
       }
   }]);
+}
+
+if (Meteor.isServer) {
+  Meteor.publish('tasks', function () {
+    return Tasks.find({
+      $or: [
+        { private: {$ne: true}},
+        { owner: this.userId}
+      ]
+    });
+  });
 }

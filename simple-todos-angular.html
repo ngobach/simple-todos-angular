@@ -17,12 +17,17 @@
 
 
    <ul>
-   	<li ng-repeat="task in tasks" ng-class="{'checked': task.checked}" ng-init="edit = fasle;">
+   	<li ng-repeat="task in tasks" ng-class="{'checked': task.checked, 'private': task.private}" ng-init="edit = fasle;">
    		<button class="delete" ng-click="deleteTask(task)">&times;</button>
       <label>
-        <input type="checkbox" ng-checked="task.checked" ng-click="setChecked(task)" class="toggle-checked" />
+        <input type="checkbox" ng-checked="task.checked" ng-click="setChecked(task,$event)" class="toggle-checked" />
         <span>{{ task.text }}</span><br>
       </label>
+      <button class="toggle-private"
+        ng-if="task.owner === $root.currentUser._id"
+        ng-click="setPrivate(task)">
+        {{task.private == true ? "Private" : "Public"}}
+      </button>
       <small>By: <i>{{ task.username }}</i></small>
    	</li>
    </ul>
