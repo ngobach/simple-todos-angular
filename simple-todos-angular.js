@@ -1,5 +1,31 @@
 Tasks = new Mongo.Collection('tasks');
 
+Meteor.methods({
+  addTask: function (text) {
+    if (!Meteor.userId())
+      throw new Meteor.Error('not-authorized');
+
+    Tasks.insert({
+      text: text,
+      createAt: new Date(),
+      owner: Meteor.userId(),
+      username: Meteor.user().username
+    });
+  },
+  deleteTask: function (taskId) {
+    // var task = Tasks.findOne(taskId);
+    // if (Meteor.userId() != task.owner)
+    //   throw new Meteor.Error('not-authorized');
+    Tasks.remove(taskId);
+  },
+  setChecked: function (taskId, value) {
+    // var task = Tasks.findOne(taskId);
+    // if (Meteor.userId() != task.owner)
+    //   throw new Meteor.Error('not-authorized');
+    Tasks.update(taskId,{$set: {checked: value}});
+  }
+});
+
 if (Meteor.isClient) {
  
   Accounts.ui.config({
@@ -40,24 +66,18 @@ if (Meteor.isClient) {
         // Check empty text and user login
         if ($scope.text == '' || Meteor.userId() == null)
           return;
-        var insert = {
-          text: $scope.text,
-          createAt: new Date(),
-          owner: Meteor.userId(),
-          username: Meteor.user().username
-        };
-        $scope.tasks.push(insert);
+        $meteor.call('addTask', $scope.text);
         $scope.text = '';
       };
 
       $scope.incompleteCount = function () {
         return Tasks.find({ checked: {$ne: true} }).count();
       };
-      $scope.checkEdit = function (e){
-        $scope.edit = true;
-      };
-      $scope.test = function () {
-        console.log(Meteor.user().username);
+      $scope.deleteTask = function (task) {
+        $meteor.call('deleteTask', task._id);
+      }
+      $scope.setChecked = function (task) {
+        $meteor.call('setChecked', task._id, !task.checked);
       }
   }]);
 }
