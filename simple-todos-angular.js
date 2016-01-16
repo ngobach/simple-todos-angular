@@ -46,10 +46,14 @@ if (Meteor.isClient) {
     angular.element(document).ready(onReady);
 
   // This code only runs on the client
-  angular.module('simple-todos',['angular-meteor','accounts.ui']);
- 
-  angular.module('simple-todos').controller('TodosListCtrl', ['$scope','$meteor',
-    function ($scope,$meteor) {
+  angular.module('simple-todos',['angular-meteor','accounts.ui','ngMaterial']);
+  angular.module('simple-todos').config(['$mdThemingProvider',function ($mdThemingProvider){
+    $mdThemingProvider.theme('default')
+          .primaryPalette('blue')
+          .accentPalette('red')
+          .warnPalette('grey');
+  }]).controller('TodosListCtrl', ['$scope','$meteor','$mdDialog',
+    function ($scope,$meteor,$mdDialog) {
       $scope.hideCompleted = false;
 
       $scope.query = {};
@@ -82,11 +86,31 @@ if (Meteor.isClient) {
         $meteor.call('deleteTask', task._id);
       };
 
-      $scope.setChecked = function (task,$event) {
+      $scope.setChecked = function (task) {
         $meteor.call('setChecked', task._id, !task.checked);
       };
       $scope.setPrivate = function (task) {
         $meteor.call('setPrivate', task._id, !task.private);
+      }
+
+      /**
+       * Handle click about
+       */
+      $scope.showAbout = function () {
+        $mdDialog.show(
+          $mdDialog.alert()
+            .parent(angular.element(document.querySelector('.container')))
+            .title('About')
+            .textContent('Todo list v0.1')
+            .ok('OK')
+        );
+      };
+
+      /**
+       * Open menu callback
+       */
+      $scope.openMenu = function($mdOpenMenu, $ev, task) {
+        $mdOpenMenu($ev);
       }
   }]);
 }
